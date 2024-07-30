@@ -6,8 +6,8 @@ function App() {
   return (
     <div className="App">
     {/* <StateManagment/> */}
-    {/* <LoginForm/> */}
-    <SignupForm/>
+    <LoginForm/>
+    {/* <SignupForm/> */}
     </div>
   );
 }

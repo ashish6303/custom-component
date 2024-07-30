@@ -1,6 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const btnSize = {
+  small: {
+    fontSize: '12px',
+    padding: '4px 8px',
+    height: '24px',
+  },
+  medium: {
+    fontSize: '14px',
+    padding: '6px 12px',
+    height: '32px',
+  },
+  large: {
+    fontSize: '16px',
+    padding: '8px 16px',
+    height: '40px',
+  },
+};
+
 const CustomButton = ({
   variant,
   size,
@@ -8,20 +26,16 @@ const CustomButton = ({
   onClick,
   isDisabled,
   isSubmit,
-  isCancel,
   color,
   backgroundColor,
- ...props
+  style,
+  className,
+  ...props
 }) => {
-  const classes = [
-    'button',
-    variant && `button-${variant}`,
-    size && `button-${size}`,
-  ].filter(Boolean).join(' ');
 
   const handleClick = (event) => {
     if (isDisabled) return;
-    onClick(event);
+    onClick && onClick(event);
   };
 
   const colorMap = {
@@ -30,19 +44,38 @@ const CustomButton = ({
     danger: '#FF0000', // red
   };
 
-  let buttonColor = colorMap[color] || color;
-  let buttonBackgroundColor = colorMap[backgroundColor] || backgroundColor;
+  const buttonColor = colorMap[color] || color;
+  const buttonBackgroundColor = colorMap[backgroundColor] || backgroundColor;
+  const sizeStyles = btnSize[size] || btnSize.medium; // Default to medium size if not specified
+
+  // Define styles based on the variant
+  const variantStyles = variant === 'contained'
+    ? {
+      color: '#FFF',
+      backgroundColor: buttonColor,
+      border: 'none',
+    }
+    : variant === 'outlined'
+      ? {
+        color: buttonColor,
+        backgroundColor: 'transparent',
+        border: `2px solid ${buttonColor}`,
+      }
+      : {};
 
   return (
     <button
-      className={classes}
-      type={isSubmit? 'ubmit' : 'button'}
+      type={isSubmit ? 'submit' : 'button'}
       onClick={handleClick}
       disabled={isDisabled}
+      className={className}
       style={{
-        color: buttonColor,
-        backgroundColor: buttonBackgroundColor,
+        ...sizeStyles,
+        ...variantStyles,
+        ...style,
+        cursor: 'pointer'
       }}
+      {...props}
     >
       {name}
     </button>
@@ -56,7 +89,6 @@ CustomButton.propTypes = {
   onClick: PropTypes.func,
   isDisabled: PropTypes.bool,
   isSubmit: PropTypes.bool,
-  isCancel: PropTypes.bool,
   color: PropTypes.oneOf([
     'primary', // blue
     'secondary', // yellow
@@ -67,6 +99,8 @@ CustomButton.propTypes = {
     'secondary', // yellow
     'danger', // red
   ]),
+  className: PropTypes.string, // Custom class names
+  style: PropTypes.object,
 };
 
 CustomButton.defaultProps = {
@@ -74,9 +108,10 @@ CustomButton.defaultProps = {
   size: 'medium',
   isDisabled: false,
   isSubmit: false,
-  isCancel: false,
   color: 'primary',
   backgroundColor: 'primary',
+  className: '',
+  style: {}
 };
 
 export default CustomButton;
